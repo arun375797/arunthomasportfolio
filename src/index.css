@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* ── Animations ── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0%   50%; }
+  50%       { background-position: 100% 50%; }
+}
+@keyframes ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+.animate-spin-slow     { animation: spin-slow 10s linear infinite; }
+.animate-gradient      { animation: gradient-shift 6s ease infinite; background-size: 200% 200%; }
+
+/* ── Glass morphism ── */
+.glass {
+  background: rgba(18, 18, 26, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.glass-light {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Ripple ── */
+.ripple-container { position: relative; overflow: hidden; }
+.ripple-container .ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  background: rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #0a0a0f;
+    color: #e2e8f0;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.6;
+    cursor: none;           /* Custom cursor replaces default */
+    overflow-x: hidden;
+  }
+
+  /* Ensure all clickable elements show none too */
+  a, button, [role="button"] { cursor: none; }
+
+  ::-webkit-scrollbar       { width: 5px; }
+  ::-webkit-scrollbar-track { background: #0a0a0f; }
+  ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a855f7; }
+
+  /* Better font rendering */
+  * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+}
