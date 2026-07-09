@@ -26,12 +26,13 @@ export default function SplitText({
   return (
     <Tag
       ref={ref}
-      className={`inline-block overflow-hidden ${className}`}
+      className="inline-block overflow-hidden"
       aria-label={text}
     >
       {chars.map((char, i) => (
         <motion.span
           key={i}
+          className={className}
           initial={{ y: '110%', opacity: 0, rotateZ: 6 }}
           animate={inView ? { y: '0%', opacity: 1, rotateZ: 0 } : {}}
           transition={{
@@ -65,10 +66,11 @@ export function SplitWords({
   const words = text.split(' ');
 
   return (
-    <Tag ref={ref} className={`${className}`} aria-label={text}>
+    <Tag ref={ref} className="inline" aria-label={text}>
       {words.map((word, i) => (
         <span key={i} className="inline-block overflow-hidden mr-[0.25em]">
           <motion.span
+            className={className}
             initial={{ y: '110%', opacity: 0 }}
             animate={inView ? { y: '0%', opacity: 1 } : {}}
             transition={{
