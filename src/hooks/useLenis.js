@@ -3,18 +3,22 @@ import Lenis from 'lenis';
 
 export default function useLenis() {
   useEffect(() => {
+    // Lenis fights native touch/momentum scroll on mobile — causes parallax flicker.
+    // Only enable on desktop pointer devices.
+    const isTouch =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      window.matchMedia('(pointer: coarse)').matches;
+
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    if (isTouch || isMobile) return;
+
     const lenis = new Lenis({
-      // Longer duration = longer momentum tail = buttery scroll feel
       duration: 1.8,
-      // Smooth cubic ease-out — slows gently at the end instead of hard-stop
       easing: (t) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
-      // Slightly lower multiplier so each wheel tick feels controlled
       wheelMultiplier: 0.9,
-      touchMultiplier: 1.6,
-      infinite: false,
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
       normalizeWheel: true,
     });
 

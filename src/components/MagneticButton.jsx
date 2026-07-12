@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
+import useIsMobile from '../hooks/useIsMobile';
 
 /**
  * Button that magnetically attracts toward the cursor.
@@ -14,12 +15,14 @@ export default function MagneticButton({
   tag = 'a',
 }) {
   const ref = useRef(null);
+  const isMobile = useIsMobile();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 120, damping: 22, mass: 0.8 });
   const sy = useSpring(y, { stiffness: 120, damping: 22, mass: 0.8 });
 
   const onMove = (e) => {
+    if (isMobile) return;
     const rect = ref.current.getBoundingClientRect();
     const cx = rect.left + rect.width  / 2;
     const cy = rect.top  + rect.height / 2;
@@ -35,7 +38,7 @@ export default function MagneticButton({
       ref={ref}
       href={href}
       onClick={onClick}
-      style={{ x: sx, y: sy }}
+      style={isMobile ? undefined : { x: sx, y: sy }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       whileTap={{ scale: 0.93 }}

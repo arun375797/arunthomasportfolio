@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react';
-import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from 'react-icons/hi';
 import { RiSendPlaneFill } from 'react-icons/ri';
 import { FaGithub, FaLinkedin } from 'react-icons/fa6';
 import { SplitWords } from './SplitText';
+import useIsMobile from '../hooks/useIsMobile';
+import { useSectionParallax } from '../hooks/useParallax';
 
 export default function Contact() {
   const sectionRef = useRef(null);
@@ -12,10 +14,8 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-  const bgY    = useSpring(useTransform(scrollYProgress, [0, 1], ['60px',  '-60px']),  { stiffness: 28, damping: 18, mass: 0.8 });
-  const decorY = useSpring(useTransform(scrollYProgress, [0, 1], ['150px', '-150px']), { stiffness: 28, damping: 18, mass: 0.8 });
+  const isMobile = useIsMobile();
+  const { bgY, decorY } = useSectionParallax(sectionRef, isMobile);
 
   const handleSubmit = (e) => {
     e.preventDefault();

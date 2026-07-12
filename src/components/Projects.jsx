@@ -1,11 +1,13 @@
 import { useRef } from 'react';
-import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { ExternalLink, ArrowUpRight } from 'lucide-react';
 import { SiShopify } from 'react-icons/si';
 import { HiOutlineGlobe, HiOutlineAcademicCap } from 'react-icons/hi';
 import { TbFeather, TbMicrophone2, TbBrain } from 'react-icons/tb';
 import TiltCard from './TiltCard';
 import { SplitWords } from './SplitText';
+import useIsMobile from '../hooks/useIsMobile';
+import { useSectionParallax, useScrollParallaxY } from '../hooks/useParallax';
 
 const projects = [
   {
@@ -197,11 +199,9 @@ export default function Projects() {
   const sectionRef = useRef(null);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-  const bgY    = useSpring(useTransform(scrollYProgress, [0, 1], ['60px', '-60px']),   { stiffness: 28, damping: 18, mass: 0.8 });
-  const decorY = useSpring(useTransform(scrollYProgress, [0, 1], ['150px', '-150px']), { stiffness: 28, damping: 18, mass: 0.8 });
-  const midY   = useSpring(useTransform(scrollYProgress, [0, 1], ['0px', '-200px']),   { stiffness: 28, damping: 18, mass: 0.8 });
+  const isMobile = useIsMobile();
+  const { bgY, decorY, scrollYProgress } = useSectionParallax(sectionRef, isMobile);
+  const midY = useScrollParallaxY(scrollYProgress, '0px', '-200px', isMobile);
 
   const topProject = projects.find(p => p.featured === 'top');
   const mainProjects = projects.filter(p => p.featured !== 'top');

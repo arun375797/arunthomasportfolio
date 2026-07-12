@@ -50,12 +50,14 @@
     color: #e2e8f0;
     font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     line-height: 1.6;
-    cursor: none;           /* Custom cursor replaces default */
     overflow-x: hidden;
   }
 
-  /* Ensure all clickable elements show none too */
-  a, button, [role="button"] { cursor: none; }
+  /* Custom cursor only on desktop pointer devices */
+  @media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+    a, button, [role="button"] { cursor: none; }
+  }
 
   ::-webkit-scrollbar       { width: 5px; }
   ::-webkit-scrollbar-track { background: #0a0a0f; }

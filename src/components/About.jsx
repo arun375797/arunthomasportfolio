@@ -1,9 +1,11 @@
 import { useRef } from 'react';
-import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { HiOutlineLocationMarker, HiOutlinePhone, HiOutlineMail } from 'react-icons/hi';
 import { HiOutlineCode, HiOutlineLightningBolt, HiOutlineShieldCheck } from 'react-icons/hi';
 import TiltCard from './TiltCard';
 import { SplitWords } from './SplitText';
+import useIsMobile from '../hooks/useIsMobile';
+import { useSectionParallax } from '../hooks/useParallax';
 
 const highlights = [
   { icon: <HiOutlineCode size={22} />, label: 'Clean Code', desc: 'Writing readable, maintainable solutions' },
@@ -15,16 +17,14 @@ export default function About() {
   const sectionRef = useRef(null);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-  const bgY    = useSpring(useTransform(scrollYProgress, [0, 1], ['60px',  '-60px']),  { stiffness: 28, damping: 18, mass: 0.8 });
-  const decorY = useSpring(useTransform(scrollYProgress, [0, 1], ['150px', '-150px']), { stiffness: 28, damping: 18, mass: 0.8 });
+  const isMobile = useIsMobile();
+  const { bgY, decorY } = useSectionParallax(sectionRef, isMobile);
 
   return (
     <section id="about" ref={sectionRef} className="py-24 relative overflow-hidden">
       {/* Multi-speed parallax blobs */}
-      <motion.div style={{ y: bgY    }} className="absolute -right-20 top-1/4 w-80 h-80 bg-cyan-600/6 rounded-full blur-3xl pointer-events-none" />
-      <motion.div style={{ y: decorY }} className="absolute -left-20 bottom-1/4 w-64 h-64 bg-purple-600/6 rounded-full blur-3xl pointer-events-none" />
+      <motion.div style={{ y: bgY    }} className="absolute -right-20 top-1/4 w-80 h-80 bg-cyan-600/6 rounded-full blur-3xl pointer-events-none will-change-transform" />
+      <motion.div style={{ y: decorY }} className="absolute -left-20 bottom-1/4 w-64 h-64 bg-purple-600/6 rounded-full blur-3xl pointer-events-none will-change-transform" />
 
       <div ref={ref} className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div

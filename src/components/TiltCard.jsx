@@ -1,5 +1,6 @@
 import { useRef, useCallback } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import useIsMobile from '../hooks/useIsMobile';
 
 const SPRING = { stiffness: 120, damping: 26, mass: 0.7 };
 
@@ -9,6 +10,7 @@ const SPRING = { stiffness: 120, damping: 26, mass: 0.7 };
  */
 export default function TiltCard({ children, className = '', maxTilt = 12, scale = 1.03, glareOpacity = 0.18 }) {
   const ref = useRef(null);
+  const isMobile = useIsMobile();
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -25,11 +27,12 @@ export default function TiltCard({ children, className = '', maxTilt = 12, scale
   const glareY = useTransform(ySpring, [-0.5, 0.5], ['-30%', '130%']);
 
   const handleMouseMove = useCallback((e) => {
+    if (isMobile) return;
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
     x.set((e.clientX - rect.left) / rect.width - 0.5);
     y.set((e.clientY - rect.top) / rect.height - 0.5);
-  }, [x, y]);
+  }, [x, y, isMobile]);
 
   const handleMouseLeave = useCallback(() => {
     x.set(0);
@@ -47,13 +50,14 @@ export default function TiltCard({ children, className = '', maxTilt = 12, scale
           rotateY,
           transformStyle: 'preserve-3d',
         }}
-        whileHover={{ scale }}
+        whileHover={isMobile ? undefined : { scale }}
         transition={{ type: 'spring', ...SPRING }}
         className="relative w-full h-full"
       >
         {children}
 
-        {/* Glare layer */}
+        {/* Glare layer — desktop only */}
+        {!isMobile && (
         <div
           className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden"
           aria-hidden="true"
@@ -71,6 +75,7 @@ export default function TiltCard({ children, className = '', maxTilt = 12, scale
             }}
           />
         </div>
+        )}
       </motion.div>
     </div>
   );

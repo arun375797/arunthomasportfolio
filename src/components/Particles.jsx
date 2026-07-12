@@ -1,9 +1,13 @@
 import { useEffect, useRef } from 'react';
+import useIsMobile from '../hooks/useIsMobile';
 
 export default function Particles() {
   const canvasRef = useRef(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
+    if (isMobile) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let animId;
@@ -41,7 +45,6 @@ export default function Particles() {
         ctx.fillStyle = `rgba(139,92,246,${p.opacity})`;
         ctx.fill();
 
-        // Draw lines to nearby particles
         particles.slice(i + 1).forEach((p2) => {
           const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
           if (dist < 120) {
@@ -63,7 +66,9 @@ export default function Particles() {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <canvas

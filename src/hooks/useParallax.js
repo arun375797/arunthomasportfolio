@@ -1,52 +1,66 @@
-import { useRef } from 'react';
 import { useScroll, useTransform, useSpring } from 'framer-motion';
+
+const FLUID_SPRING  = { stiffness: 28, damping: 18, mass: 0.8 };
+// Near-instant on mobile — eliminates spring lag that causes scroll flicker
+const MOBILE_SPRING = { stiffness: 500, damping: 50, mass: 0.1 };
+
+/**
+ * Scroll-linked Y transform. Uses instant spring on mobile to prevent
+ * the "chasing" effect that causes parallax to blink on touch scroll.
+ */
+export function useScrollParallaxY(scrollYProgress, from, to, isMobile = false) {
+  const raw = useTransform(scrollYProgress, [0, 1], [from, to]);
+  return useSpring(raw, isMobile ? MOBILE_SPRING : FLUID_SPRING);
+}
+
+/**
+ * Section background + decoration parallax blobs.
+ */
+export function useSectionParallax(sectionRef, isMobile = false) {
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const bgY    = useScrollParallaxY(scrollYProgress, '60px',  '-60px',  isMobile);
+  const decorY = useScrollParallaxY(scrollYProgress, '150px', '-150px', isMobile);
+
+  return { scrollYProgress, bgY, decorY };
+}
 
 /**
  * Multi-speed scroll parallax for a section.
- * Returns y motion values for background (0.3x), heading (0.8x), image (1.0x), decoration (1.5x).
- *
- * @param {React.RefObject} ref - The section element ref
- * @returns {{ bgY, headY, imgY, decorY }} - Spring-smoothed MotionValues
  */
-export function useLayerParallax(ref) {
+export function useLayerParallax(ref, isMobile = false) {
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
   });
 
-  // Lower stiffness = floatier / more fluid; higher damping = no bounce
-  const SPRING = { stiffness: 28, damping: 18, mass: 0.8 };
+  const bgY    = useScrollParallaxY(scrollYProgress, '60px',  '-60px',  isMobile);
+  const headY  = useScrollParallaxY(scrollYProgress, '80px',  '-80px',  isMobile);
+  const imgY   = useScrollParallaxY(scrollYProgress, '100px', '-100px', isMobile);
+  const decorY = useScrollParallaxY(scrollYProgress, '150px', '-150px', isMobile);
 
-  // speed × 100 = pixel range in each direction
-  const bgY    = useSpring(useTransform(scrollYProgress, [0, 1], ['60px',  '-60px']),  SPRING); // 0.3x
-  const headY  = useSpring(useTransform(scrollYProgress, [0, 1], ['80px',  '-80px']),  SPRING); // 0.4x — headings
-  const imgY   = useSpring(useTransform(scrollYProgress, [0, 1], ['100px', '-100px']), SPRING); // 0.5x — images
-  const decorY = useSpring(useTransform(scrollYProgress, [0, 1], ['150px', '-150px']), SPRING); // 0.75x — decorations
-
-  return { bgY, headY, imgY, decorY };
+  return { scrollYProgress, bgY, headY, imgY, decorY };
 }
 
-/**
- * Simple scroll parallax for a single element.
- * speed: 0.3 = slow (background), 1.5 = fast (decorations)
- */
-export function useScrollParallax(speed = 1) {
+export function useScrollParallax(speed = 1, isMobile = false) {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 2000], [0, -200 * speed]);
-  return useSpring(y, { stiffness: 28, damping: 18, mass: 0.8 });
+  return useSpring(y, isMobile ? MOBILE_SPRING : FLUID_SPRING);
 }
 
-/**
- * Element-relative parallax (for blobs / decorations inside a section).
- * @param {React.RefObject} ref  - The section element
- * @param {number}          speed  - speed multiplier (default 1)
- */
-export function useElementParallax(ref, speed = 1) {
+export function useElementParallax(ref, speed = 1, isMobile = false) {
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
   });
   const amplitude = speed * 80;
-  const y = useTransform(scrollYProgress, [0, 1], [`${amplitude}px`, `-${amplitude}px`]);
-  return useSpring(y, { stiffness: 28, damping: 18, mass: 0.8 });
+  return useScrollParallaxY(
+    scrollYProgress,
+    `${amplitude}px`,
+    `-${amplitude}px`,
+    isMobile
+  );
 }

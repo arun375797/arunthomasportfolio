@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { useIsTouchDevice } from '../hooks/useIsMobile';
 
 export default function CustomCursor() {
+  const isTouch = useIsTouchDevice();
   const [hovering, setHovering] = useState(false);
   const [clicking, setClicking] = useState(false);
   const [hidden, setHidden] = useState(true);
@@ -55,6 +57,8 @@ export default function CustomCursor() {
       window.removeEventListener('focus', onFocus);
     };
   }, [cx, cy]);
+
+  if (isTouch) return null;
 
   return (
     <>

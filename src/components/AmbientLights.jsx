@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import useIsMobile from '../hooks/useIsMobile';
 
 const lights = [
   { color: '#7c3aed', x: '15%',  y: '12%',  size: 700, dur: 18, delay: 0,   opacity: 0.12 },
@@ -9,6 +10,8 @@ const lights = [
 ];
 
 export default function AmbientLights() {
+  const isMobile = useIsMobile();
+
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
       {lights.map(({ color, x, y, size, dur, delay, opacity }, i) => (
@@ -23,14 +26,15 @@ export default function AmbientLights() {
             background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
             filter: 'blur(80px)',
             transform: 'translate(-50%, -50%)',
+            opacity: isMobile ? opacity : undefined,
           }}
-          animate={{
+          animate={isMobile ? undefined : {
             scale:   [1, 1.25, 0.9, 1.15, 1],
             x:       [0, 40, -30, 20, 0],
             y:       [0, -30, 20, -15, 0],
             opacity: [opacity * 0.7, opacity * 1.4, opacity * 0.6, opacity * 1.2, opacity * 0.7],
           }}
-          transition={{
+          transition={isMobile ? undefined : {
             duration: dur,
             repeat: Infinity,
             ease: 'easeInOut',

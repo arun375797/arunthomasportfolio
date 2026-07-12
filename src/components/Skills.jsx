@@ -1,6 +1,8 @@
 import { useRef } from 'react';
-import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { SplitWords } from './SplitText';
+import useIsMobile from '../hooks/useIsMobile';
+import { useSectionParallax } from '../hooks/useParallax';
 import {
   SiReact, SiNodedotjs, SiMongodb, SiExpress, SiJavascript,
   SiRedux, SiTailwindcss, SiGit, SiRazorpay, SiPostman,
@@ -56,10 +58,8 @@ export default function Skills() {
   const sectionRef = useRef(null);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-  const bgY    = useSpring(useTransform(scrollYProgress, [0, 1], ['60px',  '-60px']),  { stiffness: 28, damping: 18, mass: 0.8 });
-  const decorY = useSpring(useTransform(scrollYProgress, [0, 1], ['150px', '-150px']), { stiffness: 28, damping: 18, mass: 0.8 });
+  const isMobile = useIsMobile();
+  const { bgY, decorY } = useSectionParallax(sectionRef, isMobile);
 
   return (
     <section id="skills" ref={sectionRef} className="py-24 relative bg-[#0d0d14] overflow-hidden">
