@@ -3,7 +3,7 @@ import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-mo
 import { ExternalLink, ArrowUpRight } from 'lucide-react';
 import { SiShopify } from 'react-icons/si';
 import { HiOutlineGlobe, HiOutlineAcademicCap } from 'react-icons/hi';
-import { TbFeather, TbMicrophone2 } from 'react-icons/tb';
+import { TbFeather, TbMicrophone2, TbBrain } from 'react-icons/tb';
 import TiltCard from './TiltCard';
 import { SplitWords } from './SplitText';
 
@@ -31,7 +31,6 @@ const projects = [
     ],
     icon: <SiShopify size={24} />,
     gradient: 'from-purple-500 to-violet-600',
-    featured: 'grid',
     glow: 'rgba(124,58,237,0.15)',
   },
   {
@@ -42,8 +41,17 @@ const projects = [
     links: [{ label: 'Visit Site', href: 'https://neyndra.com/' }],
     icon: <HiOutlineGlobe size={24} />,
     gradient: 'from-indigo-500 to-blue-600',
-    featured: 'grid',
     glow: 'rgba(99,102,241,0.15)',
+  },
+  {
+    title: 'thinkMern',
+    subtitle: 'MERN Interview Prep Platform',
+    desc: 'Full-stack interview preparation platform for MERN stack developers. Features user authentication, curated interview question banks, and a clean learning-focused UI to help developers prepare for technical interviews.',
+    tech: ['React.js', 'Node.js', 'MongoDB', 'Express', 'Authentication'],
+    links: [{ label: 'Visit Site', href: 'https://thinkmern.online/' }],
+    icon: <TbBrain size={24} />,
+    gradient: 'from-amber-500 to-orange-600',
+    glow: 'rgba(245,158,11,0.15)',
   },
   {
     title: 'ICT Internship Portal',
@@ -53,7 +61,6 @@ const projects = [
     links: [],
     icon: <HiOutlineAcademicCap size={24} />,
     gradient: 'from-rose-500 to-pink-600',
-    featured: false,
     glow: 'rgba(244,63,94,0.12)',
   },
   {
@@ -64,8 +71,8 @@ const projects = [
     links: [{ label: 'Live Demo', href: 'https://speechtotext-frontend-34wp.onrender.com' }],
     icon: <TbMicrophone2 size={24} />,
     gradient: 'from-cyan-500 to-blue-600',
-    featured: false,
     glow: 'rgba(6,182,212,0.12)',
+    span: 'full',
   },
 ];
 
@@ -196,9 +203,8 @@ export default function Projects() {
   const decorY = useSpring(useTransform(scrollYProgress, [0, 1], ['150px', '-150px']), { stiffness: 28, damping: 18, mass: 0.8 });
   const midY   = useSpring(useTransform(scrollYProgress, [0, 1], ['0px', '-200px']),   { stiffness: 28, damping: 18, mass: 0.8 });
 
-  const topProjects  = projects.filter(p => p.featured === 'top');
-  const gridProjects = projects.filter(p => p.featured === 'grid');
-  const otherProjects= projects.filter(p => p.featured === false);
+  const topProject = projects.find(p => p.featured === 'top');
+  const mainProjects = projects.filter(p => p.featured !== 'top');
 
   return (
     <section id="projects" ref={sectionRef} className="py-24 relative bg-[#0d0d14] overflow-hidden">
@@ -223,44 +229,28 @@ export default function Projects() {
         </motion.div>
 
         <div className="space-y-6">
-          {/* Full-width top cards */}
-          {topProjects.map((project, i) => (
+          {/* Featured client project — full width */}
+          {topProject && (
             <motion.div
-              key={project.title}
               initial={{ opacity: 0, y: 50 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               <TiltCard maxTilt={5} glareOpacity={0.12}>
-                <ProjectCard {...project} large />
+                <ProjectCard {...topProject} large />
               </TiltCard>
             </motion.div>
-          ))}
+          )}
 
-          {/* Grid cards */}
-          <div className="grid lg:grid-cols-2 gap-6">
-            {gridProjects.map((project, i) => (
+          {/* All other projects — balanced 2-column grid, no gaps */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {mainProjects.map((project, i) => (
               <motion.div
                 key={project.title}
                 initial={{ opacity: 0, y: 50 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.1 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <TiltCard maxTilt={10} glareOpacity={0.15}>
-                  <ProjectCard {...project} />
-                </TiltCard>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Smaller cards */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {otherProjects.map((project, i) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 50 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.2 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.8, delay: 0.1 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className={project.span === 'full' ? 'lg:col-span-2' : ''}
               >
                 <TiltCard maxTilt={10} glareOpacity={0.15}>
                   <ProjectCard {...project} />

@@ -13,7 +13,7 @@ import MagneticButton from './MagneticButton';
 import FloatingIcons from './FloatingIcons';
 
 const stats = [
-  { label: 'Projects Built', value: 5, suffix: '+' },
+  { label: 'Projects Built', value: 6, suffix: '+' },
   { label: 'Years Learning', value: 2, suffix: '+' },
   { label: 'Client Sites',   value: 2, suffix: '' },
 ];
