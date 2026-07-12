@@ -5,7 +5,7 @@ import { SiShopify } from 'react-icons/si';
 import { HiOutlineGlobe, HiOutlineAcademicCap } from 'react-icons/hi';
 import { TbFeather, TbMicrophone2, TbBrain } from 'react-icons/tb';
 import TiltCard from './TiltCard';
-import { SplitWords } from './SplitText';
+import SectionHeading from './SectionHeading';
 import useIsMobile from '../hooks/useIsMobile';
 import { useSectionParallax, useScrollParallaxY } from '../hooks/useParallax';
 
@@ -213,20 +213,12 @@ export default function Projects() {
       <motion.div style={{ y: midY }}  className="absolute -left-20 bottom-1/4 w-72 h-72 bg-violet-600/5 rounded-full blur-3xl pointer-events-none" />
 
       <div ref={ref} className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="text-purple-400 text-sm font-semibold tracking-widest uppercase">Portfolio</span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mt-2">
-            My{' '}
-            <SplitWords text="Projects" delay={0.2} stagger={0.055}
-              className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent" />
-          </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-cyan-500 mx-auto mt-4 rounded-full" />
-        </motion.div>
+        <SectionHeading
+          label="Portfolio"
+          title="My "
+          accent="Projects"
+          inView={inView}
+        />
 
         <div className="space-y-6">
           {/* Featured client project — full width */}

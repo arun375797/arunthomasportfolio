@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { HiOutlineAcademicCap } from 'react-icons/hi';
-import { SplitWords } from './SplitText';
+import SectionHeading from './SectionHeading';
 import useIsMobile from '../hooks/useIsMobile';
 import { useSectionParallax } from '../hooks/useParallax';
 import { MdOutlineVerified } from 'react-icons/md';
@@ -61,20 +61,12 @@ export default function Education() {
       <motion.div style={{ y: bgY    }} className="absolute -right-20 top-1/4 w-80 h-80 bg-purple-600/6 rounded-full blur-3xl pointer-events-none" />
       <motion.div style={{ y: decorY }} className="absolute -left-10 bottom-1/3 w-64 h-64 bg-cyan-600/5 rounded-full blur-3xl pointer-events-none" />
       <div ref={ref} className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="text-purple-400 text-sm font-semibold tracking-widest uppercase">Academic</span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mt-2">
-            Education &{' '}
-            <SplitWords text="Certifications" delay={0.2} stagger={0.04}
-              className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent" />
-          </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-cyan-500 mx-auto mt-4 rounded-full" />
-        </motion.div>
+        <SectionHeading
+          label="Academic"
+          title="Education & "
+          accent="Certifications"
+          inView={inView}
+        />
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Education */}

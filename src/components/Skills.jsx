@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { SplitWords } from './SplitText';
+import SectionHeading from './SectionHeading';
 import useIsMobile from '../hooks/useIsMobile';
 import { useSectionParallax } from '../hooks/useParallax';
 import {
@@ -68,20 +68,12 @@ export default function Skills() {
 
       <div ref={ref} className="max-w-7xl mx-auto px-6">
         {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="text-purple-400 text-sm font-semibold tracking-widest uppercase">What I Know</span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mt-2">
-            My{' '}
-            <SplitWords text="Skills" delay={0.2} stagger={0.07}
-              className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent" />
-          </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-cyan-500 mx-auto mt-4 rounded-full" />
-        </motion.div>
+        <SectionHeading
+          label="What I Know"
+          title="My "
+          accent="Skills"
+          inView={inView}
+        />
 
         <div className="grid lg:grid-cols-2 gap-14">
           {/* ── Tech bars ── */}

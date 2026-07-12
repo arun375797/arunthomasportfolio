@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import { HiOutlineLocationMarker, HiOutlinePhone, HiOutlineMail } from 'react-icons/hi';
 import { HiOutlineCode, HiOutlineLightningBolt, HiOutlineShieldCheck } from 'react-icons/hi';
 import TiltCard from './TiltCard';
-import { SplitWords } from './SplitText';
+import SectionHeading from './SectionHeading';
 import useIsMobile from '../hooks/useIsMobile';
 import { useSectionParallax } from '../hooks/useParallax';
 
@@ -27,20 +27,12 @@ export default function About() {
       <motion.div style={{ y: decorY }} className="absolute -left-20 bottom-1/4 w-64 h-64 bg-purple-600/6 rounded-full blur-3xl pointer-events-none will-change-transform" />
 
       <div ref={ref} className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="text-purple-400 text-sm font-semibold tracking-widest uppercase">Who I Am</span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mt-2">
-            About{' '}
-            <SplitWords text="Me" delay={0.2} stagger={0.08}
-              className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent" />
-          </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-cyan-500 mx-auto mt-4 rounded-full" />
-        </motion.div>
+        <SectionHeading
+          label="Who I Am"
+          title="About "
+          accent="Me"
+          inView={inView}
+        />
 
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           <motion.div
