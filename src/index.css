@@ -53,10 +53,12 @@
     overflow-x: hidden;
   }
 
-  /* Custom cursor only on desktop pointer devices */
-  @media (hover: hover) and (pointer: fine) {
-    body { cursor: none; }
-    a, button, [role="button"] { cursor: none; }
+  /* Hide default cursor only when custom cursor component is active */
+  body.custom-cursor,
+  body.custom-cursor a,
+  body.custom-cursor button,
+  body.custom-cursor [role="button"] {
+    cursor: none;
   }
 
   ::-webkit-scrollbar       { width: 5px; }
