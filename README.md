@@ -1,4 +1,23 @@
-# React + Vite
+# Arun Thomas Portfolio
+
+## Contact form setup
+
+The contact form uses Formspree to deliver submissions without exposing an email password in the browser.
+
+1. Create an account at [Formspree](https://formspree.io/register) using `arun37579@gmail.com` and verify the email address.
+2. Create a **New Form** and set its target email to `arun37579@gmail.com`.
+3. Copy the form ID from the endpoint shown under **Integration**. For example, if the endpoint is `https://formspree.io/f/abcxyz`, copy `abcxyz`.
+4. Copy `.env.example` to `.env` and replace `your_form_id` with that ID:
+
+   ```env
+   VITE_FORMSPREE_FORM_ID=abcxyz
+   ```
+
+5. Restart the development server. For a deployed site, add the same `VITE_FORMSPREE_FORM_ID` environment variable in the hosting provider and redeploy.
+
+Test the deployed form once and confirm the first Formspree verification email if prompted. New messages will then be delivered to `arun37579@gmail.com`, and the visitor's email is included as the reply-to address.
+
+## Development
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 

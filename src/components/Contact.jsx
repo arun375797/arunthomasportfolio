@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react';
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from 'react-icons/hi';
 import { RiSendPlaneFill } from 'react-icons/ri';
 import { FaGithub, FaLinkedin } from 'react-icons/fa6';
@@ -12,18 +12,60 @@ export default function Contact() {
   const sectionRef = useRef(null);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
-  const [sent, setSent] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('idle');
+  const [submitError, setSubmitError] = useState('');
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const isMobile = useIsMobile();
   const { bgY, decorY } = useSectionParallax(sectionRef, isMobile);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, subject, message } = form;
-    const mailtoLink = `mailto:arun37579@gmail.com?subject=${encodeURIComponent(subject || 'Portfolio Inquiry from ' + name)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
-    window.open(mailtoLink);
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    const formId = import.meta.env.VITE_FORMSPREE_FORM_ID;
+
+    if (!formId) {
+      setSubmitStatus('error');
+      setSubmitError('The contact form is not configured yet. Please email me directly instead.');
+      return;
+    }
+
+    setSubmitStatus('submitting');
+    setSubmitError('');
+
+    try {
+      const response = await fetch(`https://formspree.io/f/${formId}`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...form,
+          subject: form.subject || `Portfolio inquiry from ${form.name}`,
+          _subject: form.subject || `Portfolio inquiry from ${form.name}`,
+          _replyto: form.email,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        const message = data?.errors?.map(error => error.message).join(' ');
+        throw new Error(message || 'Unable to send your message. Please try again.');
+      }
+
+      setSubmitStatus('success');
+      setForm({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      setSubmitStatus('error');
+      setSubmitError(error.message || 'Unable to send your message. Please try again.');
+    }
+  };
+
+  const updateField = (key, value) => {
+    setForm(current => ({ ...current, [key]: value }));
+    if (submitStatus !== 'submitting') {
+      setSubmitStatus('idle');
+      setSubmitError('');
+    }
   };
 
   return (
@@ -117,13 +159,16 @@ export default function Contact() {
                   { key: 'email', label: 'Email Address', placeholder: 'john@email.com', type: 'email' },
                 ].map(({ key, label, placeholder, type }) => (
                   <div key={key}>
-                    <label className="block text-sm text-slate-400 mb-1.5">{label}</label>
+                    <label htmlFor={`contact-${key}`} className="block text-sm text-slate-400 mb-1.5">{label}</label>
                     <input
+                      id={`contact-${key}`}
+                      name={key}
                       type={type}
                       required
+                      autoComplete={key}
                       placeholder={placeholder}
                       value={form[key]}
-                      onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                      onChange={e => updateField(key, e.target.value)}
                       className="w-full bg-[#1a1a26] border border-[#2a2a3a] text-slate-200 text-sm rounded-xl px-4 py-3 placeholder-slate-600 focus:outline-none focus:border-purple-500/60 transition-colors"
                     />
                   </div>
@@ -131,35 +176,60 @@ export default function Contact() {
               </div>
 
               <div>
-                <label className="block text-sm text-slate-400 mb-1.5">Subject</label>
+                <label htmlFor="contact-subject" className="block text-sm text-slate-400 mb-1.5">Subject</label>
                 <input
+                  id="contact-subject"
+                  name="subject"
                   type="text"
                   placeholder="Project Inquiry"
                   value={form.subject}
-                  onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
+                  onChange={e => updateField('subject', e.target.value)}
                   className="w-full bg-[#1a1a26] border border-[#2a2a3a] text-slate-200 text-sm rounded-xl px-4 py-3 placeholder-slate-600 focus:outline-none focus:border-purple-500/60 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-slate-400 mb-1.5">Message</label>
+                <label htmlFor="contact-message" className="block text-sm text-slate-400 mb-1.5">Message</label>
                 <textarea
+                  id="contact-message"
+                  name="message"
                   required
                   rows={5}
                   placeholder="Tell me about your project..."
                   value={form.message}
-                  onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                  onChange={e => updateField('message', e.target.value)}
                   className="w-full bg-[#1a1a26] border border-[#2a2a3a] text-slate-200 text-sm rounded-xl px-4 py-3 placeholder-slate-600 focus:outline-none focus:border-purple-500/60 transition-colors resize-none"
                 />
               </div>
 
+              <div aria-live="polite">
+                {submitStatus === 'success' && (
+                  <p className="flex items-center gap-2 text-sm text-emerald-400">
+                    <CheckCircle2 size={17} />
+                    Thanks! Your message has been sent.
+                  </p>
+                )}
+                {submitStatus === 'error' && (
+                  <p className="flex items-center gap-2 text-sm text-red-400">
+                    <AlertCircle size={17} />
+                    {submitError}
+                  </p>
+                )}
+              </div>
+
               <motion.button
                 type="submit"
+                disabled={submitStatus === 'submitting'}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300"
+                className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-violet-600 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-65"
               >
-                {sent ? (
+                {submitStatus === 'submitting' ? (
+                  <>
+                    <LoaderCircle size={18} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : submitStatus === 'success' ? (
                   <>
                     <CheckCircle2 size={18} />
                     Message Sent!
